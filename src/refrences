@@ -1,0 +1,19 @@
+https://www.youtube.com/watch?v=SzPE_AE0eEo
+https://www.youtube.com/watch?v=ygx-RmmihSg
+
+
+
+services.js - Handles API calls to the backend
+server.js - Your backend server (not UI)
+vite.config.js - Configuration for the dev server
+index.html - Just a wrapper that loads your app
+indes.jsx - Your app
+
+
+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
+
+cd C:\Users\feluj\WebstormProjects\untitled1
+node server.js
+
+cd C:\Users\feluj\WebstormProjects\untitled1
+npx vite
