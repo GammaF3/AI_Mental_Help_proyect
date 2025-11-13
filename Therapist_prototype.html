@@ -22,6 +22,152 @@
             color: white;
         }
 
+        /* Login Screen Styles */
+        .login-container {
+            max-width: 450px;
+            width: 100%;
+            background: #1a1a1a;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            padding: 50px 40px;
+            text-align: center;
+        }
+
+        .login-container h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .login-container p {
+            color: #999;
+            margin-bottom: 40px;
+            font-size: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ddd;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            background: #0a0a0a;
+            border: 2px solid #333;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            color: white;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group input::placeholder {
+            color: #666;
+        }
+
+        .login-btn {
+            width: 100%;
+            margin-top: 10px;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-btn:disabled {
+            background: #333;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .divider {
+            margin: 30px 0;
+            color: #666;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: #333;
+        }
+
+        .divider::before {
+            left: 0;
+        }
+
+        .divider::after {
+            right: 0;
+        }
+
+        .signup-link {
+            margin-top: 20px;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .signup-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Mood Selector Styles */
         .mood-selector {
             max-width: 800px;
             width: 100%;
@@ -92,6 +238,7 @@
             color: rgba(255,255,255,0.9);
         }
 
+        /* Chat Container Styles */
         .container {
             max-width: 700px;
             width: 100%;
@@ -249,11 +396,70 @@
         .hidden {
             display: none;
         }
+
+        .user-info {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid #667eea;
+            padding: 8px 16px;
+            font-size: 12px;
+            margin-top: 10px;
+            width: auto;
+        }
+
+        .logout-btn:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
     </style>
 </head>
 <body>
+<!-- Login Screen -->
+<div class="login-container" id="loginContainer">
+    <h1>Welcome Back</h1>
+    <p>Sign in to continue to your therapy sessions</p>
+
+    <div class="error-message" id="errorMessage"></div>
+
+    <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input
+                    type="email"
+                    id="email"
+                    placeholder="Enter your email"
+                    required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input
+                    type="password"
+                    id="password"
+                    placeholder="Enter your password"
+                    required
+            >
+        </div>
+
+        <button type="submit" class="login-btn" id="loginBtn">
+            Sign In
+        </button>
+    </form>
+
+    <div class="divider">OR</div>
+
+    <div class="signup-link">
+        Don't have an account? <a href="#" onclick="alert('Sign up feature coming soon!')">Sign up</a>
+    </div>
+</div>
+
 <!-- Mood Selector Screen -->
-<div class="mood-selector" id="moodSelector">
+<div class="mood-selector hidden" id="moodSelector">
     <h1>How are you feeling?</h1>
     <p>Tap the color that best describes how you feel right now</p>
 
@@ -286,6 +492,8 @@
         <div class="header-text">
             <h1>AI Therapy Assistant</h1>
             <p>A safe space to share your thoughts and feelings</p>
+            <div class="user-info" id="userInfo"></div>
+            <button class="logout-btn" onclick="handleLogout()">Logout</button>
         </div>
         <div class="mood-indicator" id="moodIndicator"></div>
     </div>
@@ -304,13 +512,22 @@
 </div>
 
 <script>
+    // DOM Elements
+    const loginContainer = document.getElementById('loginContainer');
     const moodSelector = document.getElementById('moodSelector');
     const chatContainer = document.getElementById('chatContainer');
     const chatArea = document.getElementById('chatArea');
     const promptInput = document.getElementById('prompt');
     const sendBtn = document.getElementById('sendBtn');
     const moodIndicator = document.getElementById('moodIndicator');
+    const errorMessage = document.getElementById('errorMessage');
+    const userInfo = document.getElementById('userInfo');
 
+    // User session data
+    let currentUser = null;
+    let conversationId = null;
+
+    // Mood data
     const moodGreetings = {
         red: "I can sense you're feeling some intense emotions right now. That's completely okay. Would you like to talk about what's going on?",
         yellow: "It's wonderful to hear you're feeling energized and positive! What's bringing you joy today?",
@@ -325,7 +542,72 @@
         green: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
     };
 
+    // Check if user is already logged in (on page load)
+    window.addEventListener('DOMContentLoaded', () => {
+        const savedUser = localStorage.getItem('currentUser');
+        if (savedUser) {
+            currentUser = JSON.parse(savedUser);
+            showMoodSelector();
+        }
+    });
+
+    // Handle Login
+    async function handleLogin(event) {
+        event.preventDefault();
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const loginBtn = document.getElementById('loginBtn');
+
+        // Disable button during login
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Signing in...';
+
+        // Hide any previous errors
+        errorMessage.classList.remove('show');
+
+        // TODO: Replace this with real authentication later
+        // For now, just simulate a login with any email/password
+        setTimeout(() => {
+            // Simulate successful login
+            if (email && password) {
+                currentUser = {
+                    email: email,
+                    name: email.split('@')[0], // Use part before @ as name
+                    id: 'user_' + Date.now()
+                };
+
+                // Save to localStorage
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+                // Show mood selector
+                showMoodSelector();
+            } else {
+                // Show error
+                showError('Please enter valid credentials');
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Sign In';
+            }
+        }, 1000); // Simulate network delay
+    }
+
+    // Show error message
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorMessage.classList.add('show');
+    }
+
+    // Show mood selector after login
+    function showMoodSelector() {
+        loginContainer.classList.add('hidden');
+        moodSelector.classList.remove('hidden');
+    }
+
+    // Handle mood selection
     function selectMood(mood) {
+        // Generate unique conversation ID
+        conversationId = `conv_${currentUser.id}_${Date.now()}`;
+
         // Hide mood selector, show chat
         moodSelector.classList.add('hidden');
         chatContainer.classList.add('active');
@@ -333,10 +615,14 @@
         // Set mood indicator color
         moodIndicator.style.background = moodColors[mood];
 
+        // Show user info
+        userInfo.textContent = `Logged in as: ${currentUser.email}`;
+
         // Add greeting message
         addMessage(moodGreetings[mood], false);
     }
 
+    // Add message to chat
     function addMessage(text, isUser) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${isUser ? 'user' : 'assistant'}`;
@@ -351,6 +637,7 @@
         chatArea.scrollTop = chatArea.scrollHeight;
     }
 
+    // Send message to API
     async function sendMessage() {
         const prompt = promptInput.value.trim();
         if (!prompt) return;
@@ -367,7 +654,11 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ message: prompt })
+                body: JSON.stringify({
+                    message: prompt,
+                    conversationId: conversationId,
+                    userId: currentUser.id
+                })
             });
 
             const data = await res.json();
@@ -382,6 +673,28 @@
         }
     }
 
+    // Handle logout
+    function handleLogout() {
+        if (confirm('Are you sure you want to logout?')) {
+            // Clear user data
+            localStorage.removeItem('currentUser');
+            currentUser = null;
+            conversationId = null;
+
+            // Clear chat
+            chatArea.innerHTML = '';
+
+            // Reset UI
+            chatContainer.classList.remove('active');
+            moodSelector.classList.add('hidden');
+            loginContainer.classList.remove('hidden');
+
+            // Clear form
+            document.getElementById('loginForm').reset();
+        }
+    }
+
+    // Enter key to send message
     promptInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
