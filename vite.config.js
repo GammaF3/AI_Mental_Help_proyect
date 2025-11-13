@@ -1,5 +1,5 @@
 import { defineConfig } from "vite";
-import solidPlugin from "vite-plugin-solid";
+import solidPlugin from "vite-plussgin-solid";
 
 export default defineConfig({
     plugins: [solidPlugin()],

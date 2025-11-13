@@ -17,3 +17,11 @@ node server.js
 
 cd C:\Users\feluj\WebstormProjects\untitled1
 npx vite
+
+
+Luis
+I built a complete backend for my AI therapy chatbot using Node.js, MongoDB Atlas,
+and the OpenAI API. When a user sends a message, my server saves it to the database, sends it to OpenAI for a response,
+stores the AI’s reply, and returns it to the client. I also separated the database logic into its own file (db.js)
+and kept the API logic in server.js. With this setup, I now have a fully connected system where every user and AI message
+is stored and can be retrieved at any time and it is open 24/7.
