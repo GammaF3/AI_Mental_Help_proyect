@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI Therapy Assistant</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -16,6 +16,7 @@
             padding: 20px;
             color: white;
         }
+
         /* LOGIN / SIGNUP CONTAINER */
         .auth-container {
             max-width: 450px;
@@ -34,9 +35,10 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .auth-container p { color: #999; margin-bottom: 30px; font-size: 15px; }
+        .auth-container p { color: #999; margin-bottom: 24px; font-size: 15px; }
+
         .form-group { margin-bottom: 20px; text-align: left; }
-        .form-group label { display: block; margin-bottom: 8px; color: #ddd; font-size: 14px; font-weight: 500; }
+        .form-group label { display:block; margin-bottom:8px; color:#ddd; font-size:14px; font-weight:500; }
         .form-group input {
             width: 100%;
             padding: 15px;
@@ -50,9 +52,10 @@
         }
         .form-group input:focus { outline: none; border-color: #667eea; }
         .form-group input::placeholder { color: #666; }
-        .auth-btn {
+
+        .auth-btn, button {
             width: 100%;
-            margin-top: 10px;
+            margin-top: 12px;
             padding: 15px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -63,27 +66,35 @@
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        .auth-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4); }
-        .auth-btn:active { transform: translateY(0); }
-        .auth-btn:disabled { background: #333; cursor: not-allowed; transform: none; }
+        .auth-btn:hover, button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102,126,234,0.4); }
+        .auth-btn:disabled, button:disabled { background:#333; cursor:not-allowed; transform:none; box-shadow:none; }
+
+        .guest-btn {
+            background: transparent;
+            border: 1px solid #667eea;
+            margin-top: 10px;
+        }
+        .guest-btn:hover { background: rgba(102,126,234,0.1); box-shadow:none; }
+
         .error-message {
-            background: rgba(255, 107, 107, 0.1);
+            background: rgba(255,107,107,0.1);
             border: 1px solid #ff6b6b;
             color: #ff6b6b;
             padding: 12px;
             border-radius: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             font-size: 14px;
             display: none;
+            text-align: left;
         }
         .error-message.show { display: block; }
-        .toggle-link { margin-top: 20px; color: #999; font-size: 14px; cursor: pointer; }
-        .toggle-link span { color: #667eea; font-weight: 600; }
+        .toggle-link { margin-top: 18px; color:#999; font-size:14px; cursor:pointer; }
+        .toggle-link span { color:#667eea; font-weight:600; }
         .toggle-link span:hover { text-decoration: underline; }
 
         /* MOOD SELECTOR */
         .mood-selector { max-width: 800px; width: 100%; text-align: center; display: none; }
-        .mood-selector h1 { font-size: 48px; margin-bottom: 20px; color: white; }
+        .mood-selector h1 { font-size: 48px; margin-bottom: 20px; }
         .mood-selector p { font-size: 18px; color: #999; margin-bottom: 50px; }
         .mood-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; max-width: 600px; margin: 0 auto; }
         .mood-sphere {
@@ -118,7 +129,6 @@
         .container.active { display: block; }
         .header {
             background: #1a1a1a;
-            color: white;
             padding: 30px;
             display: flex;
             justify-content: space-between;
@@ -145,19 +155,13 @@
         }
         .message.user .message-bubble {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
             border-bottom-right-radius: 4px;
         }
         .message.assistant .message-bubble {
             background: #222;
-            color: #fff;
             border-bottom-left-radius: 4px;
         }
-        .input-area {
-            padding: 20px 30px 30px;
-            background: #1a1a1a;
-            border-top: 1px solid #333;
-        }
+        .input-area { padding: 20px 30px 30px; border-top: 1px solid #333; }
         textarea {
             width: 100%;
             padding: 15px;
@@ -172,29 +176,10 @@
         }
         textarea:focus { outline: none; border-color: #667eea; }
         textarea::placeholder { color: #666; }
-        button {
-            width: 100%;
-            margin-top: 15px;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4); }
-        button:active { transform: translateY(0); }
-        button:disabled { background: #333; cursor: not-allowed; transform: none; }
-        .disclaimer { text-align: center; color: #666; font-size: 12px; padding: 15px; }
-        .chat-area::-webkit-scrollbar { width: 8px; }
-        .chat-area::-webkit-scrollbar-track { background: #1a1a1a; }
-        .chat-area::-webkit-scrollbar-thumb { background: #667eea; border-radius: 4px; }
-        .user-info { font-size: 12px; color: #999; margin-top: 5px; }
+        .disclaimer { text-align:center; color:#666; font-size:12px; padding: 15px; }
+        .user-info { font-size:12px; color:#999; margin-top:5px; }
         .logout-btn { background: transparent; border: 1px solid #667eea; padding: 8px 16px; font-size: 12px; margin-top: 10px; width: auto; }
-        .logout-btn:hover { background: rgba(102, 126, 234, 0.1); }
+        .logout-btn:hover { background: rgba(102,126,234,0.1); box-shadow:none; transform:none; }
     </style>
 </head>
 <body>
@@ -203,22 +188,30 @@
 <div class="auth-container" id="authContainer">
     <h1 id="authTitle">Welcome Back</h1>
     <p id="authSubtitle">Sign in to continue to your therapy sessions</p>
+
     <div class="error-message" id="errorMessage"></div>
+
     <form id="authForm" onsubmit="handleAuth(event)">
         <div class="form-group" id="nameGroup" style="display:none;">
             <label for="name">Name</label>
             <input type="text" id="name" placeholder="Enter your name">
         </div>
+
         <div class="form-group">
             <label for="email">Email</label>
             <input type="email" id="email" placeholder="Enter your email" required>
         </div>
+
         <div class="form-group">
             <label for="password">Password</label>
             <input type="password" id="password" placeholder="Enter your password" required>
         </div>
+
         <button type="submit" class="auth-btn" id="authBtn">Sign In</button>
     </form>
+
+    <button class="guest-btn" onclick="continueAsGuest()">Continue as Guest</button>
+
     <div class="toggle-link" id="toggleLink">
         Don't have an account? <span onclick="toggleAuth()">Sign up</span>
     </div>
@@ -228,6 +221,7 @@
 <div class="mood-selector" id="moodSelector">
     <h1>How are you feeling?</h1>
     <p>Tap the color that best describes how you feel right now</p>
+
     <div class="mood-grid">
         <div class="mood-sphere red" onclick="selectMood('red')">
             <h3>High Energy<br>Unpleasant</h3>
@@ -259,21 +253,30 @@
         </div>
         <div class="mood-indicator" id="moodIndicator"></div>
     </div>
+
     <div class="chat-area" id="chatArea"></div>
+
     <div class="input-area">
         <textarea id="prompt" placeholder="Share your thoughts..." rows="3"></textarea>
         <button onclick="sendMessage()" id="sendBtn">Send</button>
     </div>
+
     <div class="disclaimer">
         Note: This is an AI assistant and not a replacement for professional mental health care.
     </div>
 </div>
 
 <script>
+    // ===== CONFIG =====
+    // Use your LAN / ngrok / cloudflare tunnel base URL here:
+    const API_URL =
+        new URLSearchParams(location.search).get("api")
+        || "http://localhost:3001";
+    // ==================
+
     const authContainer = document.getElementById('authContainer');
     const authTitle = document.getElementById('authTitle');
     const authSubtitle = document.getElementById('authSubtitle');
-    const authForm = document.getElementById('authForm');
     const authBtn = document.getElementById('authBtn');
     const toggleLink = document.getElementById('toggleLink');
     const nameGroup = document.getElementById('nameGroup');
@@ -304,9 +307,15 @@
         green: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
     };
 
-    // Toggle login/signup
+    function showError(msg) {
+        errorMessage.textContent = msg;
+        errorMessage.classList.add('show');
+    }
+
     function toggleAuth() {
         isSignup = !isSignup;
+        errorMessage.classList.remove('show');
+
         if (isSignup) {
             authTitle.textContent = "Create Account";
             authSubtitle.textContent = "Sign up to start your therapy journey";
@@ -322,7 +331,19 @@
         }
     }
 
-    // Handle login/signup
+    // ✅ NEW: Guest mode (no Mongo endpoints)
+    function continueAsGuest() {
+        currentUser = {
+            id: "guest_" + Date.now(),
+            email: "guest@demo.local",
+            name: "Guest",
+            guest: true
+        };
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        authContainer.style.display = 'none';
+        moodSelector.style.display = 'block';
+    }
+
     async function handleAuth(event) {
         event.preventDefault();
         errorMessage.classList.remove('show');
@@ -335,44 +356,40 @@
         authBtn.textContent = isSignup ? 'Signing up...' : 'Signing in...';
 
         try {
-            const url = isSignup ? 'http://localhost:3001/api/signup' : 'http://localhost:3001/api/login';
+            const url = isSignup ? `${API_URL}/api/signup` : `${API_URL}/api/login`;
             const body = isSignup ? { email, password, name } : { email, password };
+
             const res = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
             });
             const data = await res.json();
-            if (data.error) throw new Error(data.error);
+            if (!res.ok || data.error) throw new Error(data.error || "Auth failed");
 
             currentUser = data;
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
             authContainer.style.display = 'none';
 
-            // Check previous messages
-            const messagesRes = await fetch(`http://localhost:3001/api/messages?userId=${currentUser.id}`);
+            // Load saved messages from Mongo (only for real users)
+            const messagesRes = await fetch(`${API_URL}/api/messages?userId=${encodeURIComponent(currentUser.id)}`);
             const messagesData = await messagesRes.json();
-            if (messagesData.length > 0) {
+
+            if (Array.isArray(messagesData) && messagesData.length > 0) {
                 conversationId = messagesData[messagesData.length - 1].conversationId;
                 chatContainer.classList.add('active');
                 userInfo.textContent = `Logged in as: ${currentUser.email}`;
-                messagesData.forEach(msg => addMessage(msg.text, msg.role==='user'));
+                messagesData.forEach(msg => addMessage(msg.text, msg.role === 'user'));
             } else {
                 moodSelector.style.display = 'block';
             }
-
         } catch (err) {
-            errorMessage.textContent = err.message;
-            errorMessage.classList.add('show');
+            showError(err.message);
         } finally {
             authBtn.disabled = false;
             authBtn.textContent = isSignup ? "Sign Up" : "Sign In";
         }
-    }
-
-    function showMoodSelector() {
-        authContainer.style.display = 'none';
-        moodSelector.style.display = 'block';
     }
 
     function selectMood(mood) {
@@ -380,7 +397,10 @@
         moodSelector.style.display = 'none';
         chatContainer.classList.add('active');
         moodIndicator.style.background = moodColors[mood];
-        userInfo.textContent = `Logged in as: ${currentUser.email}`;
+        userInfo.textContent = currentUser.guest
+            ? `Guest session`
+            : `Logged in as: ${currentUser.email}`;
+
         addMessage(moodGreetings[mood], false);
     }
 
@@ -398,25 +418,30 @@
     async function sendMessage() {
         const message = promptInput.value.trim();
         if (!message) return;
+
         addMessage(message, true);
         promptInput.value = '';
         sendBtn.disabled = true;
 
         try {
-            const res = await fetch('http://localhost:3001/api/therapy', {
+            const res = await fetch(`${API_URL}/api/therapy`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     userId: currentUser.id,
                     conversationId,
-                    message
+                    message,
+                    guest: !!currentUser.guest   // ✅ tells backend not to save
                 })
             });
+
             const data = await res.json();
-            addMessage(data.response, false);
-            conversationId = data.conversationId;
+            if (!res.ok) throw new Error(data.error || "Request failed");
+
+            addMessage(data.response || "No response.", false);
+            conversationId = data.conversationId || conversationId;
         } catch (err) {
-            addMessage("Sorry, something went wrong.", false);
+            addMessage(`Sorry, something went wrong: ${err.message}`, false);
             console.error(err);
         } finally {
             sendBtn.disabled = false;
@@ -429,26 +454,45 @@
     }
 
     // Auto-login if user saved
-    window.onload = () => {
-        const savedUser = JSON.parse(localStorage.getItem('currentUser'));
-        if (savedUser) {
-            currentUser = savedUser;
-            authContainer.style.display = 'none';
-            // fetch messages and decide whether to show mood selector or chat
-            fetch(`http://localhost:3001/api/messages?userId=${currentUser.id}`)
-                .then(res => res.json())
-                .then(messagesData => {
-                    if (messagesData.length > 0) {
-                        conversationId = messagesData[messagesData.length - 1].conversationId;
-                        chatContainer.classList.add('active');
-                        userInfo.textContent = `Logged in as: ${currentUser.email}`;
-                        messagesData.forEach(msg => addMessage(msg.text, msg.role==='user'));
-                    } else {
-                        moodSelector.style.display = 'block';
-                    }
-                });
+    window.onload = async () => {
+        const saved = localStorage.getItem('currentUser');
+        if (!saved) return;
+
+        currentUser = JSON.parse(saved);
+        authContainer.style.display = 'none';
+
+        // Guest: no Mongo history
+        if (currentUser.guest) {
+            moodSelector.style.display = 'block';
+            return;
+        }
+
+        // Real user: load history
+        try {
+            const messagesRes = await fetch(`${API_URL}/api/messages?userId=${encodeURIComponent(currentUser.id)}`);
+            const messagesData = await messagesRes.json();
+
+            if (Array.isArray(messagesData) && messagesData.length > 0) {
+                conversationId = messagesData[messagesData.length - 1].conversationId;
+                chatContainer.classList.add('active');
+                userInfo.textContent = `Logged in as: ${currentUser.email}`;
+                messagesData.forEach(msg => addMessage(msg.text, msg.role === 'user'));
+            } else {
+                moodSelector.style.display = 'block';
+            }
+        } catch {
+            // if backend unreachable, just show mood selector
+            moodSelector.style.display = 'block';
         }
     };
+
+    // Enter key to send message
+    promptInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
 </script>
 </body>
 </html>
