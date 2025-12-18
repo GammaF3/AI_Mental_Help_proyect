@@ -5,12 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Therapy Assistant</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #000;
@@ -21,9 +16,8 @@
             padding: 20px;
             color: white;
         }
-
-        /* Login Screen Styles */
-        .login-container {
+        /* LOGIN / SIGNUP CONTAINER */
+        .auth-container {
             max-width: 450px;
             width: 100%;
             background: #1a1a1a;
@@ -32,8 +26,7 @@
             padding: 50px 40px;
             text-align: center;
         }
-
-        .login-container h1 {
+        .auth-container h1 {
             font-size: 36px;
             margin-bottom: 10px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -41,26 +34,9 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-
-        .login-container p {
-            color: #999;
-            margin-bottom: 40px;
-            font-size: 15px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #ddd;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
+        .auth-container p { color: #999; margin-bottom: 30px; font-size: 15px; }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 8px; color: #ddd; font-size: 14px; font-weight: 500; }
         .form-group input {
             width: 100%;
             padding: 15px;
@@ -72,17 +48,9 @@
             color: white;
             transition: border-color 0.3s;
         }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .form-group input::placeholder {
-            color: #666;
-        }
-
-        .login-btn {
+        .form-group input:focus { outline: none; border-color: #667eea; }
+        .form-group input::placeholder { color: #666; }
+        .auth-btn {
             width: 100%;
             margin-top: 10px;
             padding: 15px;
@@ -95,63 +63,9 @@
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
         }
-
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .login-btn:active {
-            transform: translateY(0);
-        }
-
-        .login-btn:disabled {
-            background: #333;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .divider {
-            margin: 30px 0;
-            color: #666;
-            font-size: 14px;
-            position: relative;
-        }
-
-        .divider::before,
-        .divider::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            width: 40%;
-            height: 1px;
-            background: #333;
-        }
-
-        .divider::before {
-            left: 0;
-        }
-
-        .divider::after {
-            right: 0;
-        }
-
-        .signup-link {
-            margin-top: 20px;
-            color: #999;
-            font-size: 14px;
-        }
-
-        .signup-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .signup-link a:hover {
-            text-decoration: underline;
-        }
-
+        .auth-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4); }
+        .auth-btn:active { transform: translateY(0); }
+        .auth-btn:disabled { background: #333; cursor: not-allowed; transform: none; }
         .error-message {
             background: rgba(255, 107, 107, 0.1);
             border: 1px solid #ff6b6b;
@@ -162,38 +76,16 @@
             font-size: 14px;
             display: none;
         }
+        .error-message.show { display: block; }
+        .toggle-link { margin-top: 20px; color: #999; font-size: 14px; cursor: pointer; }
+        .toggle-link span { color: #667eea; font-weight: 600; }
+        .toggle-link span:hover { text-decoration: underline; }
 
-        .error-message.show {
-            display: block;
-        }
-
-        /* Mood Selector Styles */
-        .mood-selector {
-            max-width: 800px;
-            width: 100%;
-            text-align: center;
-        }
-
-        .mood-selector h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-            color: white;
-        }
-
-        .mood-selector p {
-            font-size: 18px;
-            color: #999;
-            margin-bottom: 50px;
-        }
-
-        .mood-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 30px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
+        /* MOOD SELECTOR */
+        .mood-selector { max-width: 800px; width: 100%; text-align: center; display: none; }
+        .mood-selector h1 { font-size: 48px; margin-bottom: 20px; color: white; }
+        .mood-selector p { font-size: 18px; color: #999; margin-bottom: 50px; }
+        .mood-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; max-width: 600px; margin: 0 auto; }
         .mood-sphere {
             aspect-ratio: 1;
             border-radius: 50%;
@@ -205,40 +97,15 @@
             transition: transform 0.3s, box-shadow 0.3s;
             padding: 40px;
         }
+        .mood-sphere:hover { transform: scale(1.1); box-shadow: 0 20px 60px rgba(255,255,255,0.3); }
+        .mood-sphere.red { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); }
+        .mood-sphere.yellow { background: linear-gradient(135deg, #ffd93d 0%, #f9ca24 100%); }
+        .mood-sphere.blue { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .mood-sphere.green { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .mood-sphere h3 { font-size: 20px; margin-bottom: 10px; font-weight: 600; }
+        .mood-sphere p { font-size: 14px; color: rgba(255,255,255,0.9); }
 
-        .mood-sphere:hover {
-            transform: scale(1.1);
-            box-shadow: 0 20px 60px rgba(255,255,255,0.3);
-        }
-
-        .mood-sphere.red {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-        }
-
-        .mood-sphere.yellow {
-            background: linear-gradient(135deg, #ffd93d 0%, #f9ca24 100%);
-        }
-
-        .mood-sphere.blue {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        }
-
-        .mood-sphere.green {
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-        }
-
-        .mood-sphere h3 {
-            font-size: 20px;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .mood-sphere p {
-            font-size: 14px;
-            color: rgba(255,255,255,0.9);
-        }
-
-        /* Chat Container Styles */
+        /* CHAT INTERFACE */
         .container {
             max-width: 700px;
             width: 100%;
@@ -248,11 +115,7 @@
             overflow: hidden;
             display: none;
         }
-
-        .container.active {
-            display: block;
-        }
-
+        .container.active { display: block; }
         .header {
             background: #1a1a1a;
             color: white;
@@ -262,40 +125,17 @@
             align-items: center;
             border-bottom: 1px solid #333;
         }
-
-        .header-text h1 {
-            font-size: 28px;
-            margin-bottom: 5px;
-        }
-
-        .header-text p {
-            opacity: 0.7;
-            font-size: 14px;
-        }
-
-        .mood-indicator {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-        }
-
+        .header-text h1 { font-size: 28px; margin-bottom: 5px; }
+        .header-text p { opacity: 0.7; font-size: 14px; }
+        .mood-indicator { width: 60px; height: 60px; border-radius: 50%; }
         .chat-area {
             padding: 30px;
             max-height: 400px;
             overflow-y: auto;
             background: #0a0a0a;
         }
-
-        .message {
-            margin-bottom: 20px;
-            display: flex;
-            align-items: flex-start;
-        }
-
-        .message.user {
-            flex-direction: row-reverse;
-        }
-
+        .message { margin-bottom: 20px; display: flex; align-items: flex-start; }
+        .message.user { flex-direction: row-reverse; }
         .message-bubble {
             max-width: 70%;
             padding: 15px 20px;
@@ -303,25 +143,21 @@
             font-size: 15px;
             line-height: 1.5;
         }
-
         .message.user .message-bubble {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border-bottom-right-radius: 4px;
         }
-
         .message.assistant .message-bubble {
             background: #222;
             color: #fff;
             border-bottom-left-radius: 4px;
         }
-
         .input-area {
             padding: 20px 30px 30px;
             background: #1a1a1a;
             border-top: 1px solid #333;
         }
-
         textarea {
             width: 100%;
             padding: 15px;
@@ -334,16 +170,8 @@
             color: white;
             transition: border-color 0.3s;
         }
-
-        textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        textarea::placeholder {
-            color: #666;
-        }
-
+        textarea:focus { outline: none; border-color: #667eea; }
+        textarea::placeholder { color: #666; }
         button {
             width: 100%;
             margin-top: 15px;
@@ -357,128 +185,62 @@
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
         }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        button:disabled {
-            background: #333;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .disclaimer {
-            text-align: center;
-            color: #666;
-            font-size: 12px;
-            padding: 15px;
-        }
-
-        .chat-area::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .chat-area::-webkit-scrollbar-track {
-            background: #1a1a1a;
-        }
-
-        .chat-area::-webkit-scrollbar-thumb {
-            background: #667eea;
-            border-radius: 4px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .user-info {
-            font-size: 12px;
-            color: #999;
-            margin-top: 5px;
-        }
-
-        .logout-btn {
-            background: transparent;
-            border: 1px solid #667eea;
-            padding: 8px 16px;
-            font-size: 12px;
-            margin-top: 10px;
-            width: auto;
-        }
-
-        .logout-btn:hover {
-            background: rgba(102, 126, 234, 0.1);
-        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4); }
+        button:active { transform: translateY(0); }
+        button:disabled { background: #333; cursor: not-allowed; transform: none; }
+        .disclaimer { text-align: center; color: #666; font-size: 12px; padding: 15px; }
+        .chat-area::-webkit-scrollbar { width: 8px; }
+        .chat-area::-webkit-scrollbar-track { background: #1a1a1a; }
+        .chat-area::-webkit-scrollbar-thumb { background: #667eea; border-radius: 4px; }
+        .user-info { font-size: 12px; color: #999; margin-top: 5px; }
+        .logout-btn { background: transparent; border: 1px solid #667eea; padding: 8px 16px; font-size: 12px; margin-top: 10px; width: auto; }
+        .logout-btn:hover { background: rgba(102, 126, 234, 0.1); }
     </style>
 </head>
 <body>
-<!-- Login Screen -->
-<div class="login-container" id="loginContainer">
-    <h1>Welcome Back</h1>
-    <p>Sign in to continue to your therapy sessions</p>
 
+<!-- LOGIN / SIGNUP -->
+<div class="auth-container" id="authContainer">
+    <h1 id="authTitle">Welcome Back</h1>
+    <p id="authSubtitle">Sign in to continue to your therapy sessions</p>
     <div class="error-message" id="errorMessage"></div>
-
-    <form id="loginForm" onsubmit="handleLogin(event)">
+    <form id="authForm" onsubmit="handleAuth(event)">
+        <div class="form-group" id="nameGroup" style="display:none;">
+            <label for="name">Name</label>
+            <input type="text" id="name" placeholder="Enter your name">
+        </div>
         <div class="form-group">
             <label for="email">Email</label>
-            <input
-                    type="email"
-                    id="email"
-                    placeholder="Enter your email"
-                    required
-            >
+            <input type="email" id="email" placeholder="Enter your email" required>
         </div>
-
         <div class="form-group">
             <label for="password">Password</label>
-            <input
-                    type="password"
-                    id="password"
-                    placeholder="Enter your password"
-                    required
-            >
+            <input type="password" id="password" placeholder="Enter your password" required>
         </div>
-
-        <button type="submit" class="login-btn" id="loginBtn">
-            Sign In
-        </button>
+        <button type="submit" class="auth-btn" id="authBtn">Sign In</button>
     </form>
-
-    <div class="divider">OR</div>
-
-    <div class="signup-link">
-        Don't have an account? <a href="#" onclick="alert('Sign up feature coming soon!')">Sign up</a>
+    <div class="toggle-link" id="toggleLink">
+        Don't have an account? <span onclick="toggleAuth()">Sign up</span>
     </div>
 </div>
 
-<!-- Mood Selector Screen -->
-<div class="mood-selector hidden" id="moodSelector">
+<!-- MOOD SELECTOR -->
+<div class="mood-selector" id="moodSelector">
     <h1>How are you feeling?</h1>
     <p>Tap the color that best describes how you feel right now</p>
-
     <div class="mood-grid">
         <div class="mood-sphere red" onclick="selectMood('red')">
             <h3>High Energy<br>Unpleasant</h3>
             <p>Anxious, Angry, Stressed</p>
         </div>
-
         <div class="mood-sphere yellow" onclick="selectMood('yellow')">
             <h3>High Energy<br>Pleasant</h3>
             <p>Happy, Excited, Energetic</p>
         </div>
-
         <div class="mood-sphere blue" onclick="selectMood('blue')">
             <h3>Low Energy<br>Unpleasant</h3>
             <p>Sad, Tired, Depressed</p>
         </div>
-
         <div class="mood-sphere green" onclick="selectMood('green')">
             <h3>Low Energy<br>Pleasant</h3>
             <p>Calm, Relaxed, Peaceful</p>
@@ -486,7 +248,7 @@
     </div>
 </div>
 
-<!-- Chat Interface -->
+<!-- CHAT INTERFACE -->
 <div class="container" id="chatContainer">
     <div class="header">
         <div class="header-text">
@@ -497,44 +259,44 @@
         </div>
         <div class="mood-indicator" id="moodIndicator"></div>
     </div>
-
-    <div class="chat-area" id="chatArea">
-    </div>
-
+    <div class="chat-area" id="chatArea"></div>
     <div class="input-area">
         <textarea id="prompt" placeholder="Share your thoughts..." rows="3"></textarea>
         <button onclick="sendMessage()" id="sendBtn">Send</button>
     </div>
-
     <div class="disclaimer">
         Note: This is an AI assistant and not a replacement for professional mental health care.
     </div>
 </div>
 
 <script>
-    // DOM Elements
-    const loginContainer = document.getElementById('loginContainer');
+    const authContainer = document.getElementById('authContainer');
+    const authTitle = document.getElementById('authTitle');
+    const authSubtitle = document.getElementById('authSubtitle');
+    const authForm = document.getElementById('authForm');
+    const authBtn = document.getElementById('authBtn');
+    const toggleLink = document.getElementById('toggleLink');
+    const nameGroup = document.getElementById('nameGroup');
+    const errorMessage = document.getElementById('errorMessage');
+
     const moodSelector = document.getElementById('moodSelector');
     const chatContainer = document.getElementById('chatContainer');
     const chatArea = document.getElementById('chatArea');
     const promptInput = document.getElementById('prompt');
     const sendBtn = document.getElementById('sendBtn');
     const moodIndicator = document.getElementById('moodIndicator');
-    const errorMessage = document.getElementById('errorMessage');
     const userInfo = document.getElementById('userInfo');
 
-    // User session data
     let currentUser = null;
     let conversationId = null;
+    let isSignup = false;
 
-    // Mood data
     const moodGreetings = {
         red: "I can sense you're feeling some intense emotions right now. That's completely okay. Would you like to talk about what's going on?",
         yellow: "It's wonderful to hear you're feeling energized and positive! What's bringing you joy today?",
         blue: "I hear you're going through a tough time with low energy. I'm here to listen. What's been weighing on you?",
         green: "It's great that you're feeling calm and at peace. How can I support you today?"
     };
-
     const moodColors = {
         red: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)',
         yellow: 'linear-gradient(135deg, #ffd93d 0%, #f9ca24 100%)',
@@ -542,165 +304,151 @@
         green: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
     };
 
-    // Check if user is already logged in (on page load)
-    window.addEventListener('DOMContentLoaded', () => {
-        const savedUser = localStorage.getItem('currentUser');
-        if (savedUser) {
-            currentUser = JSON.parse(savedUser);
-            showMoodSelector();
+    // Toggle login/signup
+    function toggleAuth() {
+        isSignup = !isSignup;
+        if (isSignup) {
+            authTitle.textContent = "Create Account";
+            authSubtitle.textContent = "Sign up to start your therapy journey";
+            authBtn.textContent = "Sign Up";
+            nameGroup.style.display = "block";
+            toggleLink.innerHTML = 'Already have an account? <span onclick="toggleAuth()">Sign in</span>';
+        } else {
+            authTitle.textContent = "Welcome Back";
+            authSubtitle.textContent = "Sign in to continue to your therapy sessions";
+            authBtn.textContent = "Sign In";
+            nameGroup.style.display = "none";
+            toggleLink.innerHTML = 'Don\'t have an account? <span onclick="toggleAuth()">Sign up</span>';
         }
-    });
+    }
 
-    // Handle Login
-    async function handleLogin(event) {
+    // Handle login/signup
+    async function handleAuth(event) {
         event.preventDefault();
+        errorMessage.classList.remove('show');
 
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
-        const loginBtn = document.getElementById('loginBtn');
+        const name = document.getElementById('name').value;
 
-        // Disable button during login
-        loginBtn.disabled = true;
-        loginBtn.textContent = 'Signing in...';
+        authBtn.disabled = true;
+        authBtn.textContent = isSignup ? 'Signing up...' : 'Signing in...';
 
-        // Hide any previous errors
-        errorMessage.classList.remove('show');
+        try {
+            const url = isSignup ? 'http://localhost:3001/api/signup' : 'http://localhost:3001/api/login';
+            const body = isSignup ? { email, password, name } : { email, password };
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+            if (data.error) throw new Error(data.error);
 
-        // TODO: Replace this with real authentication later
-        // For now, just simulate a login with any email/password
-        setTimeout(() => {
-            // Simulate successful login
-            if (email && password) {
-                currentUser = {
-                    email: email,
-                    name: email.split('@')[0], // Use part before @ as name
-                    id: 'user_' + Date.now()
-                };
+            currentUser = data;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            authContainer.style.display = 'none';
 
-                // Save to localStorage
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-
-                // Show mood selector
-                showMoodSelector();
+            // Check previous messages
+            const messagesRes = await fetch(`http://localhost:3001/api/messages?userId=${currentUser.id}`);
+            const messagesData = await messagesRes.json();
+            if (messagesData.length > 0) {
+                conversationId = messagesData[messagesData.length - 1].conversationId;
+                chatContainer.classList.add('active');
+                userInfo.textContent = `Logged in as: ${currentUser.email}`;
+                messagesData.forEach(msg => addMessage(msg.text, msg.role==='user'));
             } else {
-                // Show error
-                showError('Please enter valid credentials');
-                loginBtn.disabled = false;
-                loginBtn.textContent = 'Sign In';
+                moodSelector.style.display = 'block';
             }
-        }, 1000); // Simulate network delay
+
+        } catch (err) {
+            errorMessage.textContent = err.message;
+            errorMessage.classList.add('show');
+        } finally {
+            authBtn.disabled = false;
+            authBtn.textContent = isSignup ? "Sign Up" : "Sign In";
+        }
     }
 
-    // Show error message
-    function showError(message) {
-        errorMessage.textContent = message;
-        errorMessage.classList.add('show');
-    }
-
-    // Show mood selector after login
     function showMoodSelector() {
-        loginContainer.classList.add('hidden');
-        moodSelector.classList.remove('hidden');
+        authContainer.style.display = 'none';
+        moodSelector.style.display = 'block';
     }
 
-    // Handle mood selection
     function selectMood(mood) {
-        // Generate unique conversation ID
         conversationId = `conv_${currentUser.id}_${Date.now()}`;
-
-        // Hide mood selector, show chat
-        moodSelector.classList.add('hidden');
+        moodSelector.style.display = 'none';
         chatContainer.classList.add('active');
-
-        // Set mood indicator color
         moodIndicator.style.background = moodColors[mood];
-
-        // Show user info
         userInfo.textContent = `Logged in as: ${currentUser.email}`;
-
-        // Add greeting message
         addMessage(moodGreetings[mood], false);
     }
 
-    // Add message to chat
     function addMessage(text, isUser) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${isUser ? 'user' : 'assistant'}`;
-
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `message ${isUser ? 'user' : 'assistant'}`;
         const bubble = document.createElement('div');
         bubble.className = 'message-bubble';
         bubble.textContent = text;
-
-        messageDiv.appendChild(bubble);
-        chatArea.appendChild(messageDiv);
-
+        msgDiv.appendChild(bubble);
+        chatArea.appendChild(msgDiv);
         chatArea.scrollTop = chatArea.scrollHeight;
     }
 
-    // Send message to API
     async function sendMessage() {
-        const prompt = promptInput.value.trim();
-        if (!prompt) return;
-
-        addMessage(prompt, true);
+        const message = promptInput.value.trim();
+        if (!message) return;
+        addMessage(message, true);
         promptInput.value = '';
-
-        addMessage('Thinking...', false);
         sendBtn.disabled = true;
 
         try {
             const res = await fetch('http://localhost:3001/api/therapy', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    message: prompt,
-                    conversationId: conversationId,
-                    userId: currentUser.id
+                    userId: currentUser.id,
+                    conversationId,
+                    message
                 })
             });
-
             const data = await res.json();
-
-            chatArea.removeChild(chatArea.lastChild);
-            addMessage(data.response || 'Sorry, I had trouble understanding that.', false);
-        } catch (error) {
-            chatArea.removeChild(chatArea.lastChild);
-            addMessage("I'm sorry, I'm having trouble connecting right now. Please try again.", false);
+            addMessage(data.response, false);
+            conversationId = data.conversationId;
+        } catch (err) {
+            addMessage("Sorry, something went wrong.", false);
+            console.error(err);
         } finally {
             sendBtn.disabled = false;
         }
     }
 
-    // Handle logout
     function handleLogout() {
-        if (confirm('Are you sure you want to logout?')) {
-            // Clear user data
-            localStorage.removeItem('currentUser');
-            currentUser = null;
-            conversationId = null;
-
-            // Clear chat
-            chatArea.innerHTML = '';
-
-            // Reset UI
-            chatContainer.classList.remove('active');
-            moodSelector.classList.add('hidden');
-            loginContainer.classList.remove('hidden');
-
-            // Clear form
-            document.getElementById('loginForm').reset();
-        }
+        localStorage.removeItem('currentUser');
+        location.reload();
     }
 
-    // Enter key to send message
-    promptInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
+    // Auto-login if user saved
+    window.onload = () => {
+        const savedUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (savedUser) {
+            currentUser = savedUser;
+            authContainer.style.display = 'none';
+            // fetch messages and decide whether to show mood selector or chat
+            fetch(`http://localhost:3001/api/messages?userId=${currentUser.id}`)
+                .then(res => res.json())
+                .then(messagesData => {
+                    if (messagesData.length > 0) {
+                        conversationId = messagesData[messagesData.length - 1].conversationId;
+                        chatContainer.classList.add('active');
+                        userInfo.textContent = `Logged in as: ${currentUser.email}`;
+                        messagesData.forEach(msg => addMessage(msg.text, msg.role==='user'));
+                    } else {
+                        moodSelector.style.display = 'block';
+                    }
+                });
         }
-    });
+    };
 </script>
 </body>
 </html>
