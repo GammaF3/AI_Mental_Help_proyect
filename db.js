@@ -1,54 +1,73 @@
-//All the mongodb stuff
+const { MongoClient } = require('mongodb');
+const bcrypt = require('bcrypt');
 
-require('dotenv').config(); // to read MONGO_URI from .env
-const { MongoClient, ServerApiVersion } = require('mongodb');
+let db;
 
-const client = new MongoClient(process.env.MONGO_URI, {
-    serverApi: {
-        version: ServerApiVersion.v1,
-        strict: true,
-        deprecationErrors: true,
-    },
-});
-
-let messagesCollection; // cached collection
-
-// Connect once and reuse the connection
 async function connectToMongo() {
-    if (messagesCollection) return messagesCollection; // already connected
-
+    const client = new MongoClient(process.env.MONGO_URI);
     await client.connect();
-    const db = client.db('mental_health_db');
-    messagesCollection = db.collection('messages');
-    console.log('Connected to MongoDB (from db.js)');
-    return messagesCollection;
+    db = client.db('therapyDB');
+    console.log('Connected to MongoDB');
 }
 
-// Save a message (user or AI). doc is { text, createdAt?, ... }
-async function saveMessage(doc) {
-    const collection = await connectToMongo();
-    const fullDoc = {
-        ...doc,
-        createdAt: doc.createdAt || new Date(),
+async function createUser(email, password, name) {
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const user = {
+        email,
+        passwordHash,
+        name,
+        createdAt: new Date()
     };
-    const result = await collection.insertOne(fullDoc);
-    return { _id: result.insertedId, ...fullDoc };
+
+    const result = await db.collection('users').insertOne(user);
+    return result.insertedId.toString();
 }
 
-// Get all messages, sorted by time (oldest → newest)
-async function getAllMessages() {
-    const collection = await connectToMongo();
-    return collection.find({}).sort({ createdAt: 1 }).toArray();
+async function findUserByEmail(email) {
+    return await db.collection('users').findOne({ email });
 }
 
-//Expose the raw collection if needed later
-async function getMessagesCollection() {
-    return connectToMongo();
+async function validateUser(email, password) {
+    const user = await findUserByEmail(email);
+    if (!user) return null;
+
+    const match = await bcrypt.compare(password, user.passwordHash);
+    if (!match) return null;
+
+    return {
+        id: user._id.toString(),
+        email: user.email,
+        name: user.name
+    };
+}
+
+async function saveMessage({ userId, conversationId, role, text }) {
+    await db.collection('messages').insertOne({
+        userId,
+        conversationId,
+        role,
+        text,
+        timestamp: new Date()
+    });
+}
+
+async function getMessagesByUser(userId, conversationId = null) {
+    const filter = { userId };
+    if (conversationId) filter.conversationId = conversationId;
+
+    return await db
+        .collection('messages')
+        .find(filter)
+        .sort({ timestamp: 1 })
+        .toArray();
 }
 
 module.exports = {
     connectToMongo,
+    createUser,
+    findUserByEmail,
+    validateUser,
     saveMessage,
-    getAllMessages,
-    getMessagesCollection,
+    getMessagesByUser
 };
