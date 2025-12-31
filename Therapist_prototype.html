@@ -26,6 +26,7 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.5);
             padding: 50px 40px;
             text-align: center;
+            position: relative; /* ✅ needed for the info icon corner */
         }
         .auth-container h1 {
             font-size: 36px;
@@ -88,9 +89,94 @@
             text-align: left;
         }
         .error-message.show { display: block; }
+
         .toggle-link { margin-top: 18px; color:#999; font-size:14px; cursor:pointer; }
         .toggle-link span { color:#667eea; font-weight:600; }
         .toggle-link span:hover { text-decoration: underline; }
+
+        /* NEW: tiny API status line */
+        .api-status {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666;
+            text-align: left;
+            word-break: break-all;
+        }
+
+        /* ✅ NEW: Help / Info corner (HTML+CSS only) */
+        .help-corner {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            z-index: 5;
+        }
+        .help-corner input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .help-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            border: 1px solid #333;
+            background: rgba(10,10,10,0.9);
+            color: #ddd;
+            font-weight: 700;
+            transition: transform 0.15s, border-color 0.15s;
+        }
+        .help-icon:hover { transform: translateY(-1px); border-color: #667eea; }
+        .help-tip {
+            position: absolute;
+            top: 42px;
+            right: 0;
+            width: 260px;
+            background: rgba(20,20,20,0.98);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 12px 12px 10px;
+            text-align: left;
+            box-shadow: 0 16px 40px rgba(0,0,0,0.55);
+            display: none;
+        }
+        .help-tip h4 {
+            font-size: 13px;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+        .help-tip p {
+            font-size: 12px;
+            line-height: 1.45;
+            color: #bbb;
+            margin-bottom: 8px;
+        }
+        .help-tip ul {
+            margin-left: 16px;
+            color: #bbb;
+            font-size: 12px;
+            line-height: 1.45;
+        }
+        .help-tip li { margin: 3px 0; }
+        /* open when checked */
+        #helpToggle:checked ~ .help-tip { display: block; }
+        /* small caret */
+        .help-tip::before {
+            content: "";
+            position: absolute;
+            top: -7px;
+            right: 12px;
+            width: 12px;
+            height: 12px;
+            background: rgba(20,20,20,0.98);
+            border-left: 1px solid #333;
+            border-top: 1px solid #333;
+            transform: rotate(45deg);
+        }
 
         /* MOOD SELECTOR */
         .mood-selector { max-width: 800px; width: 100%; text-align: center; display: none; }
@@ -186,6 +272,24 @@
 
 <!-- LOGIN / SIGNUP -->
 <div class="auth-container" id="authContainer">
+
+    <!-- ✅ NEW: corner info icon + mini instructions (HTML+CSS only) -->
+    <div class="help-corner">
+        <input type="checkbox" id="helpToggle">
+        <label class="help-icon" for="helpToggle" title="How to use">i</label>
+        <div class="help-tip">
+            <h4>How to use</h4>
+            <p>Quick demo flow:</p>
+            <ul>
+                <li>Sign in / sign up, or choose <b>Guest</b>.</li>
+                <li>Pick a mood color to start a session.</li>
+                <li>Type how you feel and press <b>Send</b>.</li>
+                <li>Remember this is just an AI conversation and doesn't replace real therapy
+                if you are experiencing a real crisis call 988 for help</li>
+            </ul>
+        </div>
+    </div>
+
     <h1 id="authTitle">Welcome Back</h1>
     <p id="authSubtitle">Sign in to continue to your therapy sessions</p>
 
@@ -215,6 +319,9 @@
     <div class="toggle-link" id="toggleLink">
         Don't have an account? <span onclick="toggleAuth()">Sign up</span>
     </div>
+
+    <!-- NEW: show which API you are calling -->
+    <div class="api-status" id="apiStatus"></div>
 </div>
 
 <!-- MOOD SELECTOR -->
@@ -268,10 +375,11 @@
 
 <script>
     // ===== CONFIG =====
-    // Use your LAN / ngrok / cloudflare tunnel base URL here:
+    // ✅ Default now points to your LAN backend so your classmates can use it
+    // Override still works: ?api=http://10.129.105.116:3001
     const API_URL =
         new URLSearchParams(location.search).get("api")
-        || "http://localhost:3001";
+        || "http://10.129.105.116:3001";
     // ==================
 
     const authContainer = document.getElementById('authContainer');
@@ -289,6 +397,10 @@
     const sendBtn = document.getElementById('sendBtn');
     const moodIndicator = document.getElementById('moodIndicator');
     const userInfo = document.getElementById('userInfo');
+
+    // NEW: show API url on screen
+    const apiStatus = document.getElementById('apiStatus');
+    apiStatus.textContent = `API: ${API_URL}`;
 
     let currentUser = null;
     let conversationId = null;
@@ -331,7 +443,7 @@
         }
     }
 
-    // ✅ NEW: Guest mode (no Mongo endpoints)
+    // ✅ Guest mode (no Mongo endpoints)
     function continueAsGuest() {
         currentUser = {
             id: "guest_" + Date.now(),
@@ -339,6 +451,7 @@
             name: "Guest",
             guest: true
         };
+        // NOTE: keeping this is fine even without auto-login
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
         authContainer.style.display = 'none';
         moodSelector.style.display = 'block';
@@ -360,11 +473,24 @@
             const body = isSignup ? { email, password, name } : { email, password };
 
             const res = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body)
             });
-            const data = await res.json();
+
+            // ✅ if server returns HTML, don't crash on res.json()
+            const ct = res.headers.get("content-type") || "";
+            let data;
+
+            if (ct.includes("application/json")) {
+                data = await res.json();
+            } else {
+                const text = await res.text();
+                throw new Error(
+                    `Server returned HTML instead of JSON. URL=${url}\nFirst chars: ${text.slice(0, 120)}`
+                );
+            }
+
             if (!res.ok || data.error) throw new Error(data.error || "Auth failed");
 
             currentUser = data;
@@ -374,7 +500,18 @@
 
             // Load saved messages from Mongo (only for real users)
             const messagesRes = await fetch(`${API_URL}/api/messages?userId=${encodeURIComponent(currentUser.id)}`);
-            const messagesData = await messagesRes.json();
+
+            // ✅ SAFE JSON PARSE again
+            const rawMsgs = await messagesRes.text();
+            let messagesData;
+            try {
+                messagesData = JSON.parse(rawMsgs);
+            } catch {
+                throw new Error(
+                    "Messages endpoint did not return JSON.\n" +
+                    "First chars: " + rawMsgs.slice(0, 80)
+                );
+            }
 
             if (Array.isArray(messagesData) && messagesData.length > 0) {
                 conversationId = messagesData[messagesData.length - 1].conversationId;
@@ -431,11 +568,23 @@
                     userId: currentUser.id,
                     conversationId,
                     message,
-                    guest: !!currentUser.guest   // ✅ tells backend not to save
+                    guest: !!currentUser.guest
                 })
             });
 
-            const data = await res.json();
+            // ✅ SAFE JSON PARSE (prevents Unexpected token '<')
+            const raw = await res.text();
+            let data;
+            try {
+                data = JSON.parse(raw);
+            } catch {
+                throw new Error(
+                    "Therapy endpoint returned HTML instead of JSON.\n" +
+                    "API_URL might be wrong or server is down.\n" +
+                    "First chars: " + raw.slice(0, 80)
+                );
+            }
+
             if (!res.ok) throw new Error(data.error || "Request failed");
 
             addMessage(data.response || "No response.", false);
@@ -449,42 +598,10 @@
     }
 
     function handleLogout() {
+        // You asked to remove auto-login logic, so logout just resets state cleanly.
         localStorage.removeItem('currentUser');
         location.reload();
     }
-
-    // Auto-login if user saved
-    window.onload = async () => {
-        const saved = localStorage.getItem('currentUser');
-        if (!saved) return;
-
-        currentUser = JSON.parse(saved);
-        authContainer.style.display = 'none';
-
-        // Guest: no Mongo history
-        if (currentUser.guest) {
-            moodSelector.style.display = 'block';
-            return;
-        }
-
-        // Real user: load history
-        try {
-            const messagesRes = await fetch(`${API_URL}/api/messages?userId=${encodeURIComponent(currentUser.id)}`);
-            const messagesData = await messagesRes.json();
-
-            if (Array.isArray(messagesData) && messagesData.length > 0) {
-                conversationId = messagesData[messagesData.length - 1].conversationId;
-                chatContainer.classList.add('active');
-                userInfo.textContent = `Logged in as: ${currentUser.email}`;
-                messagesData.forEach(msg => addMessage(msg.text, msg.role === 'user'));
-            } else {
-                moodSelector.style.display = 'block';
-            }
-        } catch {
-            // if backend unreachable, just show mood selector
-            moodSelector.style.display = 'block';
-        }
-    };
 
     // Enter key to send message
     promptInput.addEventListener('keypress', (e) => {
